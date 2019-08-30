@@ -6,7 +6,11 @@ const jwt = require('jsonwebtoken');
 const keys = require('../../config/keys');
 //Load user model
 const User = require('../../models/User');
+const passport = require('passport');
 
+//Load input validation
+const validateRegisterInput = require('../../validation/register');
+const validateLoginInput = require('../../validation/login');
 //@route GET api/users/test
 //@desc Tests users route
 //@access Public
@@ -20,11 +24,17 @@ router.get('/test', (req, res) =>
 //@desc Register users
 //@access Public
 router.post('/register', (req, res) => {
+  const { errors, isValid } = validateRegisterInput(req.body);
+
+  //Check validatiom
+  if (!isValid) {
+    return res.status(400).json(errors);
+  }
+
   User.findOne({ email: req.body.email }).then((user) => {
     if (user) {
-      return res.status(400).json({
-        email: 'Email already exists'
-      });
+      errors.email = 'Email already exists';
+      return res.status(400).json({ errors });
     } else {
       const avatar = gravatar.url(req.body.email, {
         s: '200',
@@ -58,6 +68,12 @@ router.post('/register', (req, res) => {
 //@access Public
 
 router.post('/login', (req, res) => {
+  const { errors, isValid } = validateLoginInput(req.body);
+  //Check validatiom
+  if (!isValid) {
+    return res.status(400).json(errors);
+  }
+
   const email = req.body.email;
   const password = req.body.password;
 
@@ -65,13 +81,14 @@ router.post('/login', (req, res) => {
   User.findOne({ email }).then((user) => {
     //check for user
     if (!user) {
-      return res.status(404).json({ email: 'User email not found' });
+      errors.email = 'User not found';
+      return res.status(404).json(errors);
     }
 
     //check password
     bcrypt.compare(password, user.password).then((isMatch) => {
       if (isMatch) {
-        //user matched
+        //if user matched
         const payload = {
           id: user.id,
           name: user.name,
@@ -86,14 +103,31 @@ router.post('/login', (req, res) => {
           (err, token) => {
             res.json({
               success: true,
-              token: 'Bearer' + token
+              token: 'Bearer ' + token
             });
           }
         );
       } else {
-        res.status(404).json({ password: 'Password incorrect ' });
+        errors.password = 'Password incorrect';
+        res.status(404).json(errors);
       }
     });
   });
 });
+
+//@route Get api/users/current
+//@desc Return current user
+//@access Private
+
+router.get(
+  '/current',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    res.json({
+      id: req.user.id,
+      name: req.user.name,
+      email: req.user.email
+    });
+  }
+);
 module.exports = router;

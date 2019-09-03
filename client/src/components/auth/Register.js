@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { registeruser } from '../../actions/authActions';
+import { registerUser } from '../../actions/authActions';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
@@ -18,7 +18,12 @@ class Register extends Component {
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
   }
-
+  componentDidMount(){
+    if(this.props.auth.isAuthenticated){
+      this.props.history.push('/dashboard')
+    }
+  }
+  // eslint-disable-next-line no-use-before-define
   componentWillReceiveProps(nextProps) {
     if (nextProps.errors) {
       this.setState({ errors: nextProps.errors });
@@ -37,7 +42,7 @@ class Register extends Component {
       password: this.state.password,
       password2: this.state.password2
     };
-    this.props.registeruser(newUser, this.props.history);
+    this.props.registerUser(newUser, this.props.history);
   }
   render() {
     const { errors } = this.state;
@@ -72,7 +77,6 @@ class Register extends Component {
                     className={classnames('form-control form-control-lg', {
                       'is-invalid': errors.email
                     })}
-                    novalidation
                     placeholder='Email Address'
                     name='email'
                     value={this.state.email}
@@ -139,5 +143,5 @@ const mapStateToProps = (state) => ({
 
 export default connect(
   mapStateToProps,
-  { registeruser }
+  { registerUser }
 )(withRouter(Register));

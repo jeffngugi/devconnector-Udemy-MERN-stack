@@ -66,6 +66,56 @@ export const addExperience = (expData, history) => (dispatch) => {
     );
 };
 
+// Add education
+// Add education
+export const addEducation = (eduData, history) => (dispatch) => {
+  axios
+    .post('/api/profile/education', eduData)
+    .then((res) => history.push('/dashboard'))
+    .catch((err) =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+
+//Delete experience
+export const deleteExperience = (id) => (dispatch) => {
+  axios
+    .delete(`/api/profile/experience/${id}`)
+    .then((res) =>
+      dispatch({
+        type: GET_PROFILE,
+        payload: res.data
+      })
+    )
+    .catch((err) =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+
+//Delete experience
+export const deleteEducation = (id) => (dispatch) => {
+  axios
+    .delete(`/api/profile/education/${id}`)
+    .then((res) =>
+      dispatch({
+        type: GET_PROFILE,
+        payload: res.data
+      })
+    )
+    .catch((err) =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+
 //Delete account and profile
 export const deleteAccount = () => (dispatch) => {
   if (window.confirm('Are you sure? This can NOT be undone ')) {

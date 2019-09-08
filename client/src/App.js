@@ -15,6 +15,8 @@ import Login from './components/auth/Login';
 import Dashboard from './components/dashboard/Dashboard';
 import PrivateRoute from './components/common/PrivateRoute';
 import CreateProfile from './components/create-profile/CreateProfile';
+import EditProfile from './components/edit-profile/EditProfile';
+import AddExperience from './components/add-credentials/AddExperience';
 //check for token
 if (localStorage.jwtToken) {
   //Set authtoken header auth
@@ -49,10 +51,33 @@ class App extends Component {
 
               <Switch>
                 <PrivateRoute path='/dashboard' exact component={Dashboard} />
+              </Switch>
+              <Switch>
                 <PrivateRoute
                   path='/create-profile'
                   exact
                   component={CreateProfile}
+                />
+              </Switch>
+              <Switch>
+                <PrivateRoute
+                  path='/edit-profile'
+                  exact
+                  component={EditProfile}
+                />
+              </Switch>
+              <Switch>
+                <PrivateRoute
+                  path='/edit-profile'
+                  exact
+                  component={EditProfile}
+                />
+              </Switch>
+              <Switch>
+                <PrivateRoute
+                  path='/add-experience'
+                  exact
+                  component={AddExperience}
                 />
               </Switch>
             </div>

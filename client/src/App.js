@@ -21,6 +21,8 @@ import AddEducation from './components/add-credentials/AddEducation';
 import Profiles from './components/profiles/Profiles';
 import Profile from './components/profile/Profile';
 import NotFound from './components/not-found/NotFound';
+import Posts from './components/posts/Posts';
+import Post from './components/post/Post';
 //check for token
 if (localStorage.jwtToken) {
   //Set authtoken header auth
@@ -48,6 +50,7 @@ class App extends Component {
         <Router>
           <div className='App'>
             <Navbar />
+
             <Route path='/' exact component={Landing} />
             <div className='container'>
               <Route path='/register' exact component={Register} />
@@ -86,6 +89,12 @@ class App extends Component {
                   exact
                   component={AddEducation}
                 />
+              </Switch>
+              <Switch>
+                <PrivateRoute path='/feed' exact component={Posts} />
+              </Switch>
+              <Switch>
+                <PrivateRoute path='/post/:id' exact component={Post} />
               </Switch>
             </div>
             <Footer />
